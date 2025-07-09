@@ -15,7 +15,7 @@ export default function AlertDisplay() {
       }, 2000)
       return () => clearTimeout(timeout)
     }
-  }, [alert])
+  }, [alert, setAlert, setAlertType])
 
   if (!alert) return null
 
