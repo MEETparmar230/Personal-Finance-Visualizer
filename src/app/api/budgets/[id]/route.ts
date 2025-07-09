@@ -1,51 +1,30 @@
-import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
-import Budget from '@/lib/models/budget'
+import { NextRequest, NextResponse } from 'next/server'
 import mongoose from 'mongoose'
+import Budget from '@/lib/models/budget'
 
-// This is the correct type for dynamic route handler context
-type RouteContext = {
-  params: { id: string }
-}
+export async function PUT(req: NextRequest) {
+  await connectDB()
 
-const MONGO_LINK = process.env.MONGO_LINK!
-
-export async function PUT(req: NextRequest, context: RouteContext) {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(MONGO_LINK)
-  }
-
-  const id = context.params.id
-  if (!id) {
-    return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
-  }
+  const url = new URL(req.url)
+  const id = url.pathname.split('/').pop() // extract [id]
 
   const body = await req.json()
-
-  try {
-    const updatedBudget = await Budget.findByIdAndUpdate(id, body, { new: true })
-    return NextResponse.json(updatedBudget, { status: 200 })
-  } catch (err) {
-    console.error('Failed to update budget:', err)
-    return NextResponse.json({ error: 'Failed to update budget' }, { status: 500 })
-  }
+  const updated = await Budget.findByIdAndUpdate(id, body, { new: true })
+  return NextResponse.json(updated)
 }
 
-export async function DELETE(_: NextRequest, context: RouteContext) {
+export async function DELETE(req: NextRequest) {
+  await connectDB()
+
+  const url = new URL(req.url)
+  const id = url.pathname.split('/').pop()
+
+  await Budget.findByIdAndDelete(id)
+  return NextResponse.json({ success: true })
+}
+
+async function connectDB() {
   if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(MONGO_LINK)
-  }
-
-  const id = context.params.id
-  if (!id) {
-    return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
-  }
-
-  try {
-    await Budget.findByIdAndDelete(id)
-    return NextResponse.json({ success: true }, { status: 200 })
-  } catch (err) {
-    console.error('Failed to delete budget:', err)
-    return NextResponse.json({ error: 'Failed to delete budget' }, { status: 500 })
+    await mongoose.connect(process.env.MONGO_LINK!)
   }
 }
