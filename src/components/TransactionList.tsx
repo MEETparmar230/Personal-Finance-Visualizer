@@ -1,7 +1,7 @@
 'use client'
 
 import { useAlert } from '@/context/AlertContext'
-import { useEffect, useState } from 'react'
+import {  useState } from 'react'
 
 type Transaction = {
   _id: string
