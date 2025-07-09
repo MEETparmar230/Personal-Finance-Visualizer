@@ -24,7 +24,8 @@ export async function PUT(req:NextRequest,{params}:{params:{id:string}}){
 
 }
 
-export async function DELETE({params}:{params:{id:string}}){
+export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+
     if(mongoose.connection.readyState === 0){
        await mongoose.connect(MONGO_LINK!)
     }

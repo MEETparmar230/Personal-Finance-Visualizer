@@ -21,7 +21,7 @@ type ErrorType = {
   amount?: string
   date?: string
   description?: string
-  category?:String
+  category?:string
 }
 
 export default function TransactionForm({onSuccess}: Props) {

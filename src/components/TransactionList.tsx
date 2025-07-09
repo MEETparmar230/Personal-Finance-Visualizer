@@ -55,7 +55,7 @@ const { setAlert, setAlertType } = useAlert()
 
 
   
-  const handleDelete = async (id:String) =>{
+  const handleDelete = async (id:string) =>{
     const res = await fetch(`/api/transactions/${id}`,{
       method:'DELETE'
     })

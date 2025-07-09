@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 const MONGO_LINK = process.env.MONGO_LINK!;
-
+type BudgetFilter = {
+  month?: string;
+  year?: string;
+};
 
 
 
@@ -25,7 +28,7 @@ export async function GET(req: NextRequest) {
     const month = searchParams.get("month");
     const year = searchParams.get("year");
 
-    const filter: any = {};
+    const filter:BudgetFilter= {};
     if (month) filter.month = month;
     if (year) filter.year = year;
 
