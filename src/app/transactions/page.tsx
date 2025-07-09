@@ -1,11 +1,8 @@
 'use client'
 import TransactionForm from '@/components/TransactionForm'
 import TransactionList from '@/components/TransactionList'
-import ChartBar from '@/components/ChartBar'
 import  { useEffect, useState } from 'react'
-import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
-import PieChart from '@/components/PieChart'
-import SummaryCards from '@/components/SummaryCards'
+
 
 
 type Transaction = {

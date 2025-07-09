@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import ChartBar from '@/components/ChartBar'
 import PieChart from '@/components/PieChart'
-import SummaryCards from '@/components/SummaryCards'
 import { fetchTransactions } from '@/lib/api'
 import TransactionList from '@/components/TransactionList'
 
