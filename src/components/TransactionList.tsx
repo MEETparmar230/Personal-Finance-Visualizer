@@ -66,7 +66,7 @@ const { setAlert, setAlertType } = useAlert()
       setAlertType('success')
     }
     else{
-     setAlert('Failed to delete'),
+     setAlert('Failed to delete')
      setAlertType("error")
     }
 }

@@ -5,14 +5,13 @@ import {
   SelectGroup, SelectItem, SelectLabel
 } from "@/components/ui/select"
 import { useState } from 'react'
-import { Alert, AlertTitle } from "./ui/alert"
 import { useAlert } from "@/context/AlertContext"
 
 type Budget = {
   _id: string
   category: string
   amount: number
-  month: string // numeric month as string: "1" to "12"
+  month: string
   year: string
 }
 
