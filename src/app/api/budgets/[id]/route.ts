@@ -1,30 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server'
-import mongoose from 'mongoose'
 import Budget from '@/lib/models/budget'
+import mongoose from 'mongoose'
+
+const MONGO_LINK = process.env.MONGO_LINK!
+
+async function connectDB() {
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(MONGO_LINK)
+  }
+}
+
+function getIdFromUrl(req: NextRequest): string | null {
+  const url = new URL(req.url)
+  const segments = url.pathname.split('/')
+  return segments[segments.length - 1] || null
+}
 
 export async function PUT(req: NextRequest) {
   await connectDB()
 
-  const url = new URL(req.url)
-  const id = url.pathname.split('/').pop() // extract [id]
+  const id = getIdFromUrl(req)
+  if (!id) {
+    return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
+  }
 
   const body = await req.json()
-  const updated = await Budget.findByIdAndUpdate(id, body, { new: true })
-  return NextResponse.json(updated)
+
+  try {
+    const updatedBudget = await Budget.findByIdAndUpdate(id, body, { new: true })
+    return NextResponse.json(updatedBudget, { status: 200 })
+  } catch (err) {
+    console.error('Failed to update budget:', err)
+    return NextResponse.json({ error: 'Failed to update budget' }, { status: 500 })
+  }
 }
 
 export async function DELETE(req: NextRequest) {
   await connectDB()
 
-  const url = new URL(req.url)
-  const id = url.pathname.split('/').pop()
+  const id = getIdFromUrl(req)
+  if (!id) {
+    return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
+  }
 
-  await Budget.findByIdAndDelete(id)
-  return NextResponse.json({ success: true })
-}
-
-async function connectDB() {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(process.env.MONGO_LINK!)
+  try {
+    await Budget.findByIdAndDelete(id)
+    return NextResponse.json({ success: true }, { status: 200 })
+  } catch (err) {
+    console.error('Failed to delete budget:', err)
+    return NextResponse.json({ error: 'Failed to delete budget' }, { status: 500 })
   }
 }
