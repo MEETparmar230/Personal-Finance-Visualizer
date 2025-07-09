@@ -1,21 +1,20 @@
 import type { NextRequest } from 'next/server'
-import { NextResponse, type NextRequest as Req, type NextResponse as Res } from 'next/server'
-import type { NextApiResponse } from 'next'
-import type { NextApiRequest } from 'next'
-import type { NextFetchEvent } from 'next/server'
-import type { RouteHandlerContext } from 'next'
-
+import { NextResponse } from 'next/server'
 import Budget from '@/lib/models/budget'
 import mongoose from 'mongoose'
 
 const MONGO_LINK = process.env.MONGO_LINK!
 
-export async function PUT(req: NextRequest, context: RouteHandlerContext) {
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
   if (mongoose.connection.readyState === 0) {
     await mongoose.connect(MONGO_LINK)
   }
 
   const id = context.params.id
+  if (!id) {
+    return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
+  }
+
   const body = await req.json()
 
   try {
@@ -27,12 +26,15 @@ export async function PUT(req: NextRequest, context: RouteHandlerContext) {
   }
 }
 
-export async function DELETE(_: NextRequest, context: RouteHandlerContext) {
+export async function DELETE(_: NextRequest, context: { params: { id: string } }) {
   if (mongoose.connection.readyState === 0) {
     await mongoose.connect(MONGO_LINK)
   }
 
   const id = context.params.id
+  if (!id) {
+    return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
+  }
 
   try {
     await Budget.findByIdAndDelete(id)
