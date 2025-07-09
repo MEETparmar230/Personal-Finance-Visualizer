@@ -19,7 +19,7 @@ export async function POST(req:Request){
   }
 }
 
-export async function GET(req:Request){
+export async function GET(){
   if(mongoose.connection.readyState === 0){
         await mongoose.connect(MONGO_LINK!)
     }

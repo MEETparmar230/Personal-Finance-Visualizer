@@ -26,13 +26,13 @@ export default function Home() {
     fetchData()
   }, [])
 
-  const chartData = transactions.reduce((acc: Record<string, number>, t) => {
-    const month = new Date(t.date).toLocaleString('default', { month: 'short', year: 'numeric' })
-    acc[month] = (acc[month] || 0) + t.amount
-    return acc
-  }, {})
+  // const chartData = transactions.reduce((acc: Record<string, number>, t) => {
+  //   const month = new Date(t.date).toLocaleString('default', { month: 'short', year: 'numeric' })
+  //   acc[month] = (acc[month] || 0) + t.amount
+  //   return acc
+  // }, {})
 
-    const formattedChartData = Object.entries(chartData).map(([month, amount]) => ({ month, amount }))
+  //   const formattedChartData = Object.entries(chartData).map(([month, amount]) => ({ month, amount }))
 
   return (
     <main className="p-4 ">

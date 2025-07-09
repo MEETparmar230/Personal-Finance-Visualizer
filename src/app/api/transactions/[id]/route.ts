@@ -5,7 +5,7 @@ import Transaction from '@/lib/models/transaction'
 
 const MONGO_LINK = process.env.MONGO_LINK
 
-export async function DELETE(req:NextRequest,{params}:{params:{id:string}}){
+export async function DELETE({params}:{params:{id:string}}){
   if(mongoose.connection.readyState === 0){
     await mongoose.connect(MONGO_LINK!)
   }
