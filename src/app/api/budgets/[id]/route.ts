@@ -3,14 +3,19 @@ import { NextResponse } from 'next/server'
 import Budget from '@/lib/models/budget'
 import mongoose from 'mongoose'
 
+// This is the correct type for dynamic route handler context
+type RouteContext = {
+  params: { id: string }
+}
+
 const MONGO_LINK = process.env.MONGO_LINK!
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: RouteContext) {
   if (mongoose.connection.readyState === 0) {
     await mongoose.connect(MONGO_LINK)
   }
 
-  const id = params.id
+  const id = context.params.id
   if (!id) {
     return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
   }
@@ -26,12 +31,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_: NextRequest, context: RouteContext) {
   if (mongoose.connection.readyState === 0) {
     await mongoose.connect(MONGO_LINK)
   }
 
-  const id = params.id
+  const id = context.params.id
   if (!id) {
     return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
   }
