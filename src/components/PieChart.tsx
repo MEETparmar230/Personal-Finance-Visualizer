@@ -64,7 +64,7 @@ export default function PieChart() {
     </div>
 
     {/* Pie Chart skeleton */}
-    <div className="w-[400px] h-[300px] bg-gray-300 rounded-full animate-pulse mt-6" />
+    <div className="w-[300px] h-[300px] bg-gray-300 rounded-full animate-pulse mt-6" />
     
     {/* Label under Pie if needed */}
     <div className="h-4 w-40 bg-gray-200 rounded animate-pulse mt-2" />

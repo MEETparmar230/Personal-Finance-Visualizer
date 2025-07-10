@@ -33,7 +33,7 @@ export default function ChartBar({ transactions , tLoading}: Props) {
 
       {/* Bar Chart Skeleton */}
       <div className="min-w-fit flex items-center justify-center">
-        <div className="w-[600px] h-[300px] bg-gray-300 rounded-md" />
+        <div className="md:w-[600px] md:h-[300px] lg:w-[600px] lg:h-[300px]  w-50 h-60 mb-14 bg-gray-300 rounded-md" />
       </div>
     </div>
     :
