@@ -16,20 +16,23 @@ type Transaction = {
 
 export default function Page() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
+   const [loading,setLoading] = useState(false)
 
   useEffect(() => {
     const load = async () => {
+      setLoading(true)
       const txns = await fetchTransactions()
       setTransactions(txns)
+      setLoading(false)
     }
     load()
   }, [])
 
   return (
     <div className='p-4'>
-      <ChartBar transactions={transactions} />
+      <ChartBar transactions={transactions} tLoading={loading}/>
       <PieChart/>
-      <TransactionList transactions={transactions}/>
+      <TransactionList transactions={transactions} loading={loading}/>
 
     </div>
   )

@@ -21,7 +21,7 @@ function Navbar() {
   ]
 
   return (
-    <div className="p-4 shadow bg-white text-gray-500">
+    <div className="p-4 shadow bg-white text-gray-500 fixed top-0 w-full bg-white z-50">
       <NavigationMenu className="mx-auto">
         <NavigationMenuList>
           {links.map(link => (

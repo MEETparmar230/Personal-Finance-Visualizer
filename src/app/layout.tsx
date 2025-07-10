@@ -32,8 +32,10 @@ export default function RootLayout({
       >
         <AlertProvider>
           <AlertDisplay />
-          <Navbar />
+          <Navbar  />
+          <div className="mt-14">
           {children}
+          </div>
         </AlertProvider>
       </body>
     </html>

@@ -14,8 +14,10 @@ type Budget = {
 
 export default function Page() {
   const [budgets, setBudgets] = useState<Budget[]>([])
+  const [loading,setLoading] = useState(false)
 
   const fetchBudgets = async () => {
+    setLoading(true)
     try {
       const res = await fetch('/api/budgets')
       const data = await res.json()
@@ -23,6 +25,7 @@ export default function Page() {
     } catch (err) {
       console.error('Failed to fetch budgets', err)
     }
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -39,7 +42,7 @@ export default function Page() {
       
       <BudgetForm onSuccess={handleSuccess} />
      
-      <BudgetList budgets={budgets} onSuccess={handleSuccess} />
+      <BudgetList budgets={budgets} onSuccess={handleSuccess} loading={loading} />
      
     </div>
    

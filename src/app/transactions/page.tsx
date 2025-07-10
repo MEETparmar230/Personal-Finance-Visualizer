@@ -14,12 +14,14 @@ type Transaction = {
 }
 
 export default function Home() {
-
+  const [loading,setLoading] = useState(false)
   const [transactions,setTransactions] = useState<Transaction[]>([])
   const fetchData = async () => {
+    setLoading(true)
       const res = await fetch('/api/transactions')
       const data = await res.json()
       setTransactions(data);
+      setLoading(false)
   }
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function Home() {
   return (
     <main className="p-4 ">
       <TransactionForm onSuccess={fetchData} />
-      <TransactionList transactions={transactions} onSuccess={fetchData}/>
+      <TransactionList transactions={transactions} onSuccess={fetchData} loading={loading}/>
     </main>
   )
 }

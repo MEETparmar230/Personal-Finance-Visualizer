@@ -18,6 +18,7 @@ type Budget = {
 type Props = {
   budgets: Budget[]
   onSuccess: () => Promise<void>
+  loading:true|false
 }
 
 const monthNames = [
@@ -25,7 +26,7 @@ const monthNames = [
   "July", "August", "September", "October", "November", "December"
 ]
 
-export default function BudgetList({ budgets, onSuccess }: Props) {
+export default function BudgetList({ budgets, onSuccess, loading }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({
     category: '',
@@ -34,9 +35,14 @@ export default function BudgetList({ budgets, onSuccess }: Props) {
     year: ''
   })
   const { setAlert, setAlertType } = useAlert()
+  const [editLoading, setEditLoading] = useState(false)
+  const [deleteLoadingId, setDeleteLoadingId] = useState<string|null>(null)
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [cancelLoading, setCancelLoading] = useState(false)
   
 
   const handleEditClick = (b: Budget) => {
+    setEditLoading(true)
     setEditingId(b._id)
     setEditForm({
       category: b.category,
@@ -44,10 +50,11 @@ export default function BudgetList({ budgets, onSuccess }: Props) {
       month: b.month,
       year: b.year
     })
+    setEditLoading(false)
   }
 
   const handleUpdate = async (id: string) => {
-
+      setSaveLoading(true)
     const res = await fetch(`/api/budgets/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -66,10 +73,11 @@ export default function BudgetList({ budgets, onSuccess }: Props) {
       setAlert("Update failed")
       setAlertType("error")
     }
+    setSaveLoading(false)
   }
 
   const handleDelete = async (id: string) => {
-
+    setDeleteLoadingId(id)
     const res = await fetch(`/api/budgets/${id}`, {
       method: 'DELETE'
     })
@@ -81,6 +89,7 @@ export default function BudgetList({ budgets, onSuccess }: Props) {
       setAlert("Delete failed")
       setAlertType("error")
     }
+    setDeleteLoadingId(null)
   }
 
 
@@ -89,6 +98,29 @@ export default function BudgetList({ budgets, onSuccess }: Props) {
     
     <div className="max-w-md mx-auto mt-8 bg-gray-100 p-4 rounded-md">
       <h2 className="text-xl font-semibold mb-4">Budgets</h2>
+      {loading?
+      <div>
+        <ul className="space-y-2 rounded">
+  {Array.from({ length: 3 }).map((_, i) => (
+    <li key={i} className="p-3 border rounded shadow-sm bg-white animate-pulse">
+      <div className="flex justify-between items-start">
+        <div>
+          <div className="h-4 w-24 bg-gray-300 rounded mb-2" />
+          <div className="h-3 w-40 bg-gray-200 rounded" />
+        </div>
+        <div className="flex gap-2 mt-1">
+          <div className="h-6 w-14 bg-blue-200 rounded" />
+          <div className="h-6 w-16 bg-red-200 rounded" />
+        </div>
+      </div>
+    </li>
+  ))}
+</ul>
+
+      </div>
+      :
+        <div>
+          
       <ul className="space-y-2 rounded">
         {budgets.length === 0 ? (
           <p className="text-gray-500 italic">No budgets available.</p>
@@ -134,8 +166,22 @@ export default function BudgetList({ budgets, onSuccess }: Props) {
                     className="border p-2 w-full"
                   />
                   <div className="flex gap-2">
-                    <button onClick={() => handleUpdate(b._id)} className="text-green-600 font-medium">Save</button>
-                    <button onClick={() => setEditingId(null)} className="text-gray-600 font-medium">Cancel</button>
+                    <button onClick={() => handleUpdate(b._id)} className="text-white font-medium px-2 rounded bg-green-500 hover:bg-green-600 w-14 h-6">
+                      {saveLoading ?
+                          <div className="flex justify-center items-center ">
+                            <div className="w-4 h-4 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                          </div>
+                          :
+                          "Save"}
+                    </button>
+                    <button onClick={() => {setCancelLoading(true); setEditingId(null); setCancelLoading(false)}} className="text-white font-medium h-6 w-16 rounded bg-gray-500 hover:bg-gray-600">
+                      {cancelLoading ?
+                          <div className="flex justify-center items-center ">
+                            <div className="w-4 h-4 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                          </div>
+                          :
+                          "Cancel"}
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -147,8 +193,22 @@ export default function BudgetList({ budgets, onSuccess }: Props) {
                     </p>
                   </div>
                   <div className="flex gap-2 mt-1">
-                    <button onClick={() => handleEditClick(b)} className="text-blue-600">Edit</button>
-                    <button onClick={() => handleDelete(b._id)} className="text-red-600">Delete</button>
+                    <button onClick={() => handleEditClick(b)} className="text-white h-6 w-14 bg-blue-500 hover:bg-blue-600 px-2 rounded">
+                      {editLoading ?
+                          <div className="flex justify-center items-center ">
+                            <div className="w-4 h-4 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                          </div>
+                          :
+                          "Edit"}
+                    </button>
+                    <button onClick={() => handleDelete(b._id)} className="text-white h-6 px-2 rounded w-16 bg-red-500 hover:bg-red-600 ">
+                      {deleteLoadingId === b._id ?
+                          <div className="flex justify-center items-center ">
+                            <div className="w-4 h-4 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                          </div>
+                          :
+                          "Delete"}
+                    </button>
                   </div>
                 </div>
               )}
@@ -156,7 +216,10 @@ export default function BudgetList({ budgets, onSuccess }: Props) {
           ))
         )}
       </ul>
+      </div>}
     </div>
+    
     </div>
+    
   )
 }

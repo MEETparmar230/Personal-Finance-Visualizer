@@ -27,12 +27,18 @@ type Budget = {
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [budgets, setBudgets] = useState<Budget[]>([])
+  const [tLoading,setTLoading] = useState(false)
+  const [bLoading,setBLoading] = useState(false)
 
   useEffect(() => {
     const load = async () => {
+      setTLoading(true)
+      setBLoading(true)
       const [txns, buds] = await Promise.all([fetchTransactions(), fetchBudgets()])
       setTransactions(txns)
       setBudgets(buds)
+      setTLoading(false)
+      setBLoading(false)
     }
     load()
   }, [])
@@ -40,9 +46,9 @@ export default function Home() {
   return (
     <main className="p-4 bg-gray-200">
       <SummaryCards />
-      <ChartBar transactions={transactions} />
+      <ChartBar transactions={transactions} tLoading={tLoading}/>
       <PieChart />
-      <ProgressBar budgets={budgets} transactions={transactions} />
+      <ProgressBar budgets={budgets} transactions={transactions} loading={(bLoading&&tLoading)}/>
     </main>
   )
 }

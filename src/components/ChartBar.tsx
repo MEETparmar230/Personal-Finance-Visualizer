@@ -9,9 +9,10 @@ type Transaction = {
 }
 type Props = {
   transactions: Transaction[]
+  tLoading:true|false
 }
 
-export default function ChartBar({ transactions }: Props) {
+export default function ChartBar({ transactions , tLoading}: Props) {
   const chartData = transactions.reduce((acc: Record<string, number>, t) => {
     const month = new Date(t.date).toLocaleString('default', { month: 'short', year: 'numeric' })
     acc[month] = (acc[month] || 0) + t.amount
@@ -22,9 +23,23 @@ export default function ChartBar({ transactions }: Props) {
   const chartWidth = Math.max(formatted.length * 100, 300) // 100px per month bar
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 bg-gray-100 p-4 rounded-md overflow-x-auto">
-      <h2 className="text-xl font-semibold mb-4">Monthly Expenses</h2>
-      <div className="min-w-fit">
+    <div>
+
+    {
+      tLoading?
+      <div className="max-w-2xl mx-auto mt-8 bg-gray-100 p-4 rounded-md overflow-x-auto animate-pulse">
+      {/* Title */}
+      <div className="h-6 w-48 bg-gray-300 rounded mb-8" />
+
+      {/* Bar Chart Skeleton */}
+      <div className="min-w-fit flex items-center justify-center">
+        <div className="w-[600px] h-[300px] bg-gray-300 rounded-md" />
+      </div>
+    </div>
+    :
+      <div className="max-w-2xl mx-auto mt-8 bg-gray-100 p-4 rounded-md overflow-x-auto">
+      <h2 className="text-xl font-semibold mb-8">Monthly Expenses</h2>
+      <div className="min-w-fit flex items-center justify-center">
         <BarChart
           width={chartWidth}
           height={300}
@@ -37,12 +52,14 @@ export default function ChartBar({ transactions }: Props) {
             textAnchor="end"
             interval={0}
             height={60}
+            
           />
-          <YAxis />
+          <YAxis width={80}/>
           <Tooltip />
           <Bar dataKey="amount" fill="#3B82F6" />
         </BarChart>
       </div>
+    </div>}
     </div>
   )
 }
