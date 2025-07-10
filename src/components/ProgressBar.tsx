@@ -49,7 +49,7 @@ return (
           budgets={catBudgets}
           transactions={transactions}
         />
-       
+     
       ))}
       </div>
     </div>

@@ -3,7 +3,6 @@ import {
   BarChart,
   Bar,
   Legend,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -51,30 +50,37 @@ function CategoryChart({
       return {
         name: `${new Date(0, Number(b.month) - 1).toLocaleString("default", {
           month: "short",
-        })} ${b.year}`, 
+        })} ${b.year}`,
         budget: b.amount,
         spent,
       };
     });
   }, [budgets, transactions, category]);
 
+
+  const chartWidth = Math.max(chartData.length * 100, 300);
+
   return (
-    
-    <div className="mt-4 bg-white border m-2 rounded-md p-4">
+    <div className="mt-4 bg-white border m-2 rounded-md p-4  overflow-x-auto">
       <h3 className="text-lg font-semibold mb-2 text-center">{category}</h3>
-      <ResponsiveContainer width="100%" height={300}>
+      
+      <div className="min-w-fit flex justify-center">
         <BarChart
+          width={chartWidth}
+          height={300}
           data={chartData}
-          margin={{ top: 10, right: 20, left: 0, bottom: 50 }}
+          margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+          barSize={50}
+          barCategoryGap={50}
         >
-          <XAxis dataKey="name"  textAnchor="end" interval={0} />
+          <XAxis dataKey="name" textAnchor="end" angle={-10} interval={0} height={60} />
           <YAxis />
           <Tooltip />
           <Legend verticalAlign="top" height={36} />
           <Bar dataKey="budget" fill="#82ca9d" />
           <Bar dataKey="spent" fill="#8884d8" />
         </BarChart>
-      </ResponsiveContainer>
+      </div>
     </div>
   );
 }
