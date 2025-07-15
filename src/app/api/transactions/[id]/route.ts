@@ -4,6 +4,13 @@ import Transaction from '@/lib/models/transaction'
 
 const MONGO_LINK = process.env.MONGO_LINK!
 
+interface TransactionData {
+  amount: number
+  date: string | Date
+  description: string
+  category: string
+}
+
 async function connectDB() {
   if (mongoose.connection.readyState === 0) {
     await mongoose.connect(MONGO_LINK)
@@ -20,23 +27,28 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
   }
 
-  const body = await req.json()
+  const body: TransactionData = await req.json()
   const { amount, date, description, category } = body
 
   try {
-    
-    let updatedData: any = {
+    const updatedData: TransactionData = {
       amount,
       description,
       category,
+      date,
     }
 
-    if (date) {
+    // Convert date to ISO format if it's a string
+    if (typeof date === 'string') {
       const [day, month, year] = date.split('/')
       updatedData.date = new Date(`${year}-${month}-${day}`)
     }
 
-    const updatedTransaction = await Transaction.findByIdAndUpdate(id, updatedData, { new: true })
+    const updatedTransaction = await Transaction.findByIdAndUpdate(
+      id,
+      updatedData,
+      { new: true }
+    )
 
     if (!updatedTransaction) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
@@ -48,7 +60,6 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to update transaction' }, { status: 500 })
   }
 }
-
 
 export async function DELETE(req: NextRequest) {
   await connectDB()
