@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-200 text-black min-h-screen min-w-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-200 text-black min-h-screen `}
       >
         <AlertProvider>
           <AlertDisplay />

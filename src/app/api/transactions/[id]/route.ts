@@ -14,22 +14,41 @@ export async function PUT(req: NextRequest) {
   await connectDB()
 
   const url = new URL(req.url)
-  const id = url.pathname.split('/').pop() // get the [id] from URL
+  const id = url.pathname.split('/').pop()
 
   if (!id) {
     return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
   }
 
   const body = await req.json()
+  const { amount, date, description, category } = body
 
   try {
-    const updatedTransaction = await Transaction.findByIdAndUpdate(id, body, { new: true })
+    
+    let updatedData: any = {
+      amount,
+      description,
+      category,
+    }
+
+    if (date) {
+      const [day, month, year] = date.split('/')
+      updatedData.date = new Date(`${year}-${month}-${day}`)
+    }
+
+    const updatedTransaction = await Transaction.findByIdAndUpdate(id, updatedData, { new: true })
+
+    if (!updatedTransaction) {
+      return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
+    }
+
     return NextResponse.json(updatedTransaction, { status: 200 })
   } catch (err) {
     console.error('Failed to update transaction:', err)
     return NextResponse.json({ error: 'Failed to update transaction' }, { status: 500 })
   }
 }
+
 
 export async function DELETE(req: NextRequest) {
   await connectDB()

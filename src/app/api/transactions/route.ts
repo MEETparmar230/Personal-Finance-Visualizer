@@ -4,20 +4,34 @@ import mongoose from 'mongoose'
 
 const MONGO_LINK:string|undefined = process.env.MONGO_LINK
 
-export async function POST(req:Request){
-    if(mongoose.connection.readyState === 0){
-        await mongoose.connect(MONGO_LINK!)
-    }
-    const body = await req.json()
-    try{
-    const newTransacrion = await Transaction.create(body)
-    return NextResponse.json(newTransacrion,{status:201})
-    }
-    catch (error) {
+export async function POST(req: Request) {
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(MONGO_LINK!)
+  }
+
+  const body = await req.json()
+
+  try {
+    const { amount, date, description, category } = body
+
+ 
+    const [day, month, year] = date.split('/')
+    const isoDate = new Date(`${year}-${month}-${day}`) // e.g., 2025-07-14
+
+    const newTransaction = await Transaction.create({
+      amount,
+      date: isoDate,
+      description,
+      category
+    })
+
+    return NextResponse.json(newTransaction, { status: 201 })
+  } catch (error) {
     console.error('Transaction creation failed:', error)
     return NextResponse.json({ error: 'Failed to create transaction' }, { status: 500 })
   }
 }
+
 
 export async function GET(){
   if(mongoose.connection.readyState === 0){

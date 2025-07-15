@@ -85,11 +85,13 @@ export default function TransactionForm({ onSuccess }: Props) {
         />
         {error && <p className='text-red-400 text-sm font-light '>{error.amount}</p>}
       </div>
-      <div >
+      <div>
+        <div className="h-10 border hover:border-2 border-gray-200 hover:border-gray-300  rounded-md py-1">
         <DatePicker
           value={date}
           onChange={(newValue) => setDate(newValue)}
         />
+        </div>
         {error && <p className='text-red-400 text-sm font-light'>{error.date}</p>}
       </div>
       <div>

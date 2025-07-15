@@ -177,7 +177,7 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
                           {error && <p className='text-red-400 text-sm font-light'>{error.amount}</p>}
                         </div>
                         <div >
-                          <div className='w-35'>
+                          <div className='w-35 border rounded-md'>
                           <DatePicker
                           
                             value={editForm.date}
