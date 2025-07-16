@@ -8,7 +8,7 @@ A full-stack web application to help users track transactions, set monthly budge
 [![Recharts](https://img.shields.io/badge/Charts-Recharts-orange)](https://recharts.org/)
 [![Deployed on Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/)
 
-🔗 **Live Demo**: [https://your-vercel-link.vercel.app](https://your-vercel-link.vercel.app) <!-- Replace this with your actual deployed link -->
+🔗 **Live Demo**:(https://personal-finance-visualizer-kohl.vercel.app/)
 
 ---
 
@@ -81,7 +81,7 @@ lib/
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/your-username/personal-finance-visualizer.git
+   git clone https://github.com/MEETparmar230/personal-finance-visualizer.git
    cd personal-finance-visualizer
 
 2. **Install dependencies**
@@ -94,7 +94,7 @@ lib/
    MONGO_URL=your_mongodb_connection_string
 
 4. **Run the development server**
-   pnpm dev
+   pnpm run dev
 
 5. Open http://localhost:3000 in your browser.
 
