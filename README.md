@@ -32,40 +32,6 @@ A full-stack web application to help users track transactions, set monthly budge
 
 ---
 
-## 📁 Folder Structure
-
-app/
-├── page.tsx # Home 
-├── dashboard/ 
-├── budgets/ 
-├── transactions/
-
-api/
-├── budgets
-│    ├── [id].ts
-│          └── route.ts
-│    └── route.ts
-├── transactions
-│    ├── [id].ts
-│          └── route.ts
-│    └── route.ts
-
-components/
-├── TransactionForm.tsx
-├── TransactionList.tsx
-├── SummaryCards.tsx
-├── ChartBar.tsx
-├── PieChart.tsx
-├── ProgressBar.tsx
-
-lib/
-├── models/
-│ ├── transaction.ts
-│ └── budget.ts
-├── api.ts # API fetch functions
-
----
-
 ## 🌐 Pages
 
 | Route           | Description                          |
