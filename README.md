@@ -64,13 +64,15 @@ A full-stack web application to help users track transactions, set monthly budge
 
 5. Open http://localhost:3000 in your browser.
 
-📦 Future Enhancements
-🔐 Authentication (user-specific data)
 
-📄 Export reports to PDF
+## 📦 Future Enhancements
 
-🌙 Dark mode
+- 🔐 Authentication (user-specific data)
 
-💸 Income tracking
+- 📄 Export reports to PDF
 
-📈 Expense prediction or trends (AI-based)
+- 🌙 Dark mode
+
+- 💸 Income tracking
+
+- 📈 Expense prediction or trends (AI-based)
