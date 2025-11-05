@@ -65,7 +65,7 @@ const groupedBudgets = useMemo(() => {
 return (
   <div>
     
-      <div className="max-w-7xl mx-auto mt-8 bg-background rounded-lg p-4 border border-border">
+      <div className="max-w-7xl mx-auto mt-8 bg-background rounded-lg md:p-4 border border-border">
       <h2 className="text-xl font-semibold mb-6 text-center mt-6">Spent vs Budget</h2>
       <div className='flex justify-center flex-wrap gap-5'>
         

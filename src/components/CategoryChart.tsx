@@ -61,7 +61,7 @@ function CategoryChart({
   const chartWidth = Math.max(chartData.length * 100, 300);
 
   return (
-    <div className=" min-w-fit mt-4 bg-card border m-2 rounded-md p-4  overflow-x-auto">
+    <div className=" min-w-fit md:mt-4 bg-card border m-2 rounded-md md:px-4 py-2 overflow-x-auto">
       <h3 className="text-lg font-semibold mb-2 text-center">{category}</h3>
       
       <div className="min-w-fit flex justify-center">
