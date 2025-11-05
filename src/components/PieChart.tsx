@@ -52,7 +52,7 @@ export default function PieChart() {
 
   return (
   <div>{loading?
-    <div className="max-w-2xl bg-gray-100 p-4 rounded-md my-8 mx-auto">
+    <div className="max-w-2xl bg-card p-4 rounded-md my-8 mx-auto border border-border">
   <h2 className="text-xl font-semibold mb-4 animate-pulse bg-gray-300 h-6 w-48 rounded" />
 
   <div className="flex flex-col items-center gap-4 my-8">
@@ -72,7 +72,7 @@ export default function PieChart() {
 </div>
 
     :
-    <div className='max-w-2xl bg-gray-100 p-4 rounded-md my-8 mx-auto'>
+    <div className='max-w-2xl bg-card text-card-foreground p-4 rounded-md my-8 mx-auto border border-border'>
       <h2 className="text-xl font-semibold mb-4">Compare Transactions</h2>
     <div className="flex flex-col items-center gap-4 my-8 ">
     
@@ -117,7 +117,7 @@ export default function PieChart() {
             cx="50%"
             cy="50%"
             outerRadius={100}
-            fill="#8884d8"
+            fill="#5ea500"
             label
           />
           <Tooltip />

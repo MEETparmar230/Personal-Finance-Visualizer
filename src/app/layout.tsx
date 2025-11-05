@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { AlertProvider } from "@/context/AlertContext";
 import AlertDisplay from "@/components/AlertDisplay";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,17 +27,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('app-theme') || 'system';
+                const isDark = theme === 'dark' || 
+                  (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (isDark) document.documentElement.classList.add('dark');
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-200 text-black min-h-screen `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AlertProvider>
-          <AlertDisplay />
-          <Navbar  />
-          <div className="mt-14">
-          {children}
-          </div>
-        </AlertProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          storageKey="app-theme"
+        >
+          <AlertProvider>
+            <AlertDisplay />
+            <Navbar />
+            <div className="mt-14">
+              {children}
+            </div>
+          </AlertProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -27,7 +27,7 @@ export default function ChartBar({ transactions , tLoading}: Props) {
 
     {
       tLoading?
-      <div className="max-w-2xl mx-auto mt-8 bg-gray-100 p-4 rounded-md overflow-x-auto animate-pulse">
+      <div className="max-w-2xl mx-auto mt-8 bg-card p-4 rounded-md overflow-x-auto animate-pulse border border-border">
       {/* Title */}
       <div className="h-6 w-48 bg-gray-300 rounded mb-8" />
 
@@ -37,7 +37,7 @@ export default function ChartBar({ transactions , tLoading}: Props) {
       </div>
     </div>
     :
-      <div className="max-w-2xl mx-auto mt-8 bg-gray-100 p-4 rounded-md overflow-x-auto">
+      <div className="max-w-2xl mx-auto mt-8 bg-card shadow p-4 rounded-md overflow-x-auto border border-border">
       <h2 className="text-xl font-semibold mb-8">Monthly Expenses</h2>
       <div className="min-w-fit flex items-center justify-center">
         <BarChart
@@ -56,7 +56,7 @@ export default function ChartBar({ transactions , tLoading}: Props) {
           />
           <YAxis width={80}/>
           <Tooltip />
-          <Bar dataKey="amount" fill="#3B82F6" />
+          <Bar dataKey="amount" fill="#5ea500" />
         </BarChart>
       </div>
     </div>}

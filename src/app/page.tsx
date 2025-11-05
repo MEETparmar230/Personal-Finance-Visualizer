@@ -44,7 +44,7 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="p-4 bg-gray-200">
+    <main className="p-4 bg-background">
       <SummaryCards />
       <ChartBar transactions={transactions} tLoading={tLoading}/>
       <PieChart />

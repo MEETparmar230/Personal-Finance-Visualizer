@@ -124,8 +124,8 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
   return (
 
 
-    <div className="max-w-md mx-auto mt-8 bg-gray-100 p-4 rounded-md">
-      <h2 className="text-xl font-semibold mb-4">Transactions</h2>
+    <div className="max-w-md mx-auto mt-8 bg-background p-4 rounded-md border border-border">
+      <h2 className="text-xl font-semibold mb-4 text-foreground">Transactions</h2>
       {loading ? <div className="space-y-2 animate-pulse">
         <div className="flex justify-between gap-2">
           <div className="h-8 bg-gray-300 rounded w-24" />
@@ -163,7 +163,7 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
               <p className="text-gray-500 italic  px-2">No transactions in this category.</p>
             ) : (
               filteredTransactions.map((t) => (
-                <li key={t._id} className="p-3 border rounded shadow-sm bg-white">
+                <li key={t._id} className="p-3 border rounded shadow-sm bg-card text-card-foreground">
                   {editingId === t._id ? (
                     <div className="space-y-2">
                       <div className='flex justify-between'>

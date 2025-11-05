@@ -81,7 +81,7 @@ export default function BudgetForm({ onSuccess }: Props) {
 
   return (
     <div className=''>
-      <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-md max-w-md mx-auto mt-6 bg-white">
+      <form onSubmit={handleSubmit} className="space-y-4 p-4 border border-border rounded-md max-w-md mx-auto mt-6 bg-card">
         <div>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger className="w-full">
@@ -143,7 +143,7 @@ export default function BudgetForm({ onSuccess }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded"
         >
           {loading ? 'Adding...' : 'Add Budget'}
         </button>

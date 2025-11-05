@@ -74,14 +74,14 @@ export default function TransactionForm({ onSuccess }: Props) {
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-md max-w-md mx-auto mt-6 bg-white">
+    <form noValidate onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-md max-w-md mx-auto mt-6 bg-card border border-border">
       <div>
         <input
           type="number"
           placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border p-2 w-full rounded"
+          className="border p-2 w-full rounded "
         />
         {error && <p className='text-red-400 text-sm font-light '>{error.amount}</p>}
       </div>
@@ -125,7 +125,7 @@ export default function TransactionForm({ onSuccess }: Props) {
 
         {error && <p className='text-red-400 text-sm font-light'>{error.category}</p>}
       </div>
-      <button type="submit" disabled={loading} className="bg-blue-500 text-white px-4 py-2 rounded">
+      <button type="submit" disabled={loading} className="bg-primary text-primary-foreground px-4 py-2 rounded">
         {loading ? 'Adding...' : 'Add Transaction'}
       </button>
     </form>

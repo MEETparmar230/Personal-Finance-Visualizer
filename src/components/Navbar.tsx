@@ -9,6 +9,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
+import { ModeToggle } from './ModeToggle'
 
 function Navbar() {
   const pathname = usePathname()
@@ -21,7 +22,7 @@ function Navbar() {
   ]
 
   return (
-    <div className="p-4 shadow bg-white text-gray-500 fixed top-0 w-full bg-white z-50">
+    <div className="p-4 shadow bg-card text-card-foreground fixed top-0 w-full  z-50">
       <NavigationMenu className="mx-auto">
         <NavigationMenuList>
           {links.map(link => (
@@ -32,7 +33,7 @@ function Navbar() {
                   className={`px-3 py-1 rounded-md transition ${
                     pathname === link.href
                       ? 'text-blue-600 font-semibold '
-                      : 'hover:text-black'
+                      : 'hover:popover'
                   }`}
                 >
                   {link.label}
@@ -40,6 +41,9 @@ function Navbar() {
               </NavigationMenuLink>
             </NavigationMenuItem>
           ))}
+          <NavigationMenuItem >
+              <ModeToggle/>
+            </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     </div>

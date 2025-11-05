@@ -96,8 +96,8 @@ export default function BudgetList({ budgets, onSuccess, loading }: Props) {
   return (
   <div>
     
-    <div className="max-w-md mx-auto mt-8 bg-gray-100 p-4 rounded-md">
-      <h2 className="text-xl font-semibold mb-4">Budgets</h2>
+    <div className="max-w-md mx-auto mt-8 bg-background p-4 rounded-md border border-border">
+      <h2 className="text-xl font-semibold mb-4 text-foreground">Budgets</h2>
       {loading?
       <div>
         <ul className="space-y-2 rounded">
@@ -123,10 +123,10 @@ export default function BudgetList({ budgets, onSuccess, loading }: Props) {
           
       <ul className="space-y-2 rounded">
         {budgets.length === 0 ? (
-          <p className="text-gray-500 italic">No budgets available.</p>
+          <p className="text-foreground italic">No budgets available.</p>
         ) : (
           budgets.map((b) => (
-            <li key={b._id} className="p-3 border rounded shadow-sm bg-white">
+            <li key={b._id} className="p-3 border rounded shadow-sm bg-card">
               {editingId === b._id ? (
                 <div className="space-y-2">
                   <input

@@ -61,7 +61,7 @@ function CategoryChart({
   const chartWidth = Math.max(chartData.length * 100, 300);
 
   return (
-    <div className=" min-w-fit mt-4 bg-white border m-2 rounded-md p-4  overflow-x-auto">
+    <div className=" min-w-fit mt-4 bg-card border m-2 rounded-md p-4  overflow-x-auto">
       <h3 className="text-lg font-semibold mb-2 text-center">{category}</h3>
       
       <div className="min-w-fit flex justify-center">
@@ -77,8 +77,8 @@ function CategoryChart({
           <YAxis />
           <Tooltip />
           <Legend verticalAlign="top" height={36} />
-          <Bar dataKey="budget" fill="#82ca9d" />
-          <Bar dataKey="spent" fill="#8884d8" />
+          <Bar dataKey="budget" fill="#7bf1a7" />
+          <Bar dataKey="spent" fill="#026630" />
         </BarChart>
       </div>
     </div>

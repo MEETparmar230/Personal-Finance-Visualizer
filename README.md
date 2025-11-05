@@ -28,6 +28,7 @@ A full-stack web application to help users track transactions, set monthly budge
 - **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui
 - **Backend**: Next.js API Routes, MongoDB Atlas, Mongoose
 - **Charts**: Recharts
+- **validatoins**:zod
 - **UI/UX**: Clean and responsive design with Tailwind + shadcn/ui
 
 ---

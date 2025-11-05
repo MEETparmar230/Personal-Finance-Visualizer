@@ -38,13 +38,13 @@ const groupedBudgets = useMemo(() => {
   if (loading) {
   // Show loader even if budgets are empty
   return (
-    <div className="max-w-7xl  mx-auto mt-8 bg-gray-100 rounded-lg p-4">
+    <div className="max-w-7xl  mx-auto mt-8 bg-background rounded-lg p-4 border border-border">
       <h2 className="text-xl font-semibold mb-6 text-center mt-6 animate-pulse bg-gray-300 h-6 w-48 mx-auto rounded" />
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
         {[...Array(3)].map((_, idx) => (
           <div
             key={idx}
-            className=" p-4 bg-white rounded shadow animate-pulse space-y-3"
+            className=" p-4 bg-card rounded shadow animate-pulse space-y-3 border border-border"
           >
             <div className="h-4 bg-gray-300 rounded w-1/2 mx-auto" />
             <div className="h-48 bg-gray-200 rounded" />
@@ -65,7 +65,7 @@ const groupedBudgets = useMemo(() => {
 return (
   <div>
     
-      <div className="max-w-7xl mx-auto mt-8 bg-gray-100 rounded-lg p-4">
+      <div className="max-w-7xl mx-auto mt-8 bg-background rounded-lg p-4 border border-border">
       <h2 className="text-xl font-semibold mb-6 text-center mt-6">Spent vs Budget</h2>
       <div className='flex justify-center flex-wrap gap-5'>
         
