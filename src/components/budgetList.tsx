@@ -188,7 +188,7 @@ export default function BudgetList({ budgets, onSuccess, loading }: Props) {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="font-semibold">{b.category}</p>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-muted-foreground">
                       ₹{b.amount} for {monthNames[Number(b.month) - 1]} {b.year}
                     </p>
                   </div>

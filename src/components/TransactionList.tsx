@@ -160,10 +160,10 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
           </select>
           <ul className="space-y-2  rounded">
             {filteredTransactions.length === 0 ? (
-              <p className="text-gray-500 italic  px-2">No transactions in this category.</p>
+              <p className="text-card-foreground italic  px-2">No transactions in this category.</p>
             ) : (
               filteredTransactions.map((t) => (
-                <li key={t._id} className="p-3 border rounded shadow-sm bg-card text-card-foreground">
+                <li key={t._id} className="p-3 border border-border rounded shadow-sm bg-card text-card-foreground">
                   {editingId === t._id ? (
                     <div className="space-y-2">
                       <div className='flex justify-between'>
@@ -177,7 +177,7 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
                           {error && <p className='text-red-400 text-sm font-light'>{error.amount}</p>}
                         </div>
                         <div >
-                          <div className='w-35 border rounded-md'>
+                          <div className='w-35 border  rounded-md'>
                           <DatePicker
                           
                             value={editForm.date}
@@ -194,12 +194,12 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
                             type="text"
                             value={editForm.description}
                             onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                            className="rounded-md border px-2 w-80"
+                            className="rounded-md border border-border px-2 w-80"
                           />
                           {error && <p className='text-red-400 text-sm font-light'>{error.description}</p>}
                         </div>
                         <div className='flex justify-between'>
-                          <div className="text-xs text-gray-500 italic items-center flex px-1 px-1 flex items-center px-1 ">{t.category}</div>
+                          <div className="text-xs text-card-foreground italic items-center flex px-1 px-1 flex items-center px-1 ">{t.category}</div>
 
                           <div className="flex gap-2 items-end justify-center">
                             <button onClick={() => handleUpdate(t._id)} className="bg-green-500 hover:bg-green-600 text-white px-2 py-0 h-6 w-14 rounded block">
@@ -226,12 +226,12 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
                     <div className='grid grid-cols-1 gap-1'>
                       <div className="flex justify-between">
                         <span className=' rounded-md'>₹{t.amount}</span>
-                        <span className='border px-1 rounded-md'>{new Date(t.date).toLocaleDateString()}</span>
+                        <span className='border border-border px-1 rounded-md'>{new Date(t.date).toLocaleDateString()}</span>
                       </div>
 
-                      <div className="text-sm text-gray-600 w-full border px-1 rounded-md">{t.description}</div>
+                      <div className="text-sm text-card-foreground w-full border border-border px-1 rounded-md">{t.description}</div>
                       <div className='flex justify-between'>
-                        <div className="text-sm text-gray-600 bg-blue flex justify-center items-center mx-1  px-1">{t.category}</div>
+                        <div className="text-sm text-muted-foreground bg-blue flex justify-center items-center mx-1  px-1">{t.category}</div>
                         {!hideControls && <div className="flex gap-2 items-end">
                           <button onClick={() => handleEditClick(t)} className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-0 rounded  h-6 w-14 ">
                             {editLoading ?

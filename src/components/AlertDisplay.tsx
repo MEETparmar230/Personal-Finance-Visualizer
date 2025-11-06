@@ -21,7 +21,7 @@ export default function AlertDisplay() {
 
   return (
     <Alert
-      className={`fixed top-16 left-1/2 -translate-x-1/2 w-1/3 z-50 shadow-md bg-white text-center border-2 ${
+      className={`fixed top-20 left-1/2 -translate-x-1/2 w-1/3 z-50 shadow-md bg-white text-center border-2 ${
         alertType === 'success'
           ? 'border-blue-500 text-blue-500'
           : 'border-red-500 text-red-500'

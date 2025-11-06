@@ -36,7 +36,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
   const [month, setMonth] = React.useState<Date | undefined>(date)
 
   return (
-    <div className="relative flex gap-2 text-gray-500">
+    <div className="relative flex gap-2 text-card-foreground">
       <Input
         id="date"
         value={value}

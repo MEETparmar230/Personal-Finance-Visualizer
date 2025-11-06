@@ -77,8 +77,10 @@ function CategoryChart({
           <YAxis />
           <Tooltip />
           <Legend verticalAlign="top" height={36} />
-          <Bar dataKey="budget" fill="#7bf1a7" />
+          <Bar dataKey="budget" fill="#5ea500" />
           <Bar dataKey="spent" fill="#026630" />
+          
+          
         </BarChart>
       </div>
     </div>
