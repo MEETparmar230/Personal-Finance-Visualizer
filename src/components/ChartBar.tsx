@@ -20,7 +20,7 @@ export default function ChartBar({ transactions , tLoading}: Props) {
   }, {})
 
   const formatted = Object.entries(chartData).map(([month, amount]) => ({ month, amount }))
-  const chartWidth = Math.max(formatted.length * 100, 300) // 100px per month bar
+  const chartWidth = Math.max(formatted.length * 100, 300) 
 
   return (
     <div>

@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMemo } from "react"
+
 
 type Transaction = {
   _id: string
@@ -9,30 +10,35 @@ type Transaction = {
   description: string
   category: string
 }
+interface Props {
+  transactions:Transaction[],
+  tLoading:boolean
+}
 
-export default function SummaryCards() {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [loading,setLoading] = useState(false)
+export default function SummaryCards({ transactions , tLoading}: Props) {
 
-  useEffect(() => {
-    setLoading(true)
-    const fetchData = async () => {
-      const res = await fetch('/api/transactions')
-      const data = await res.json()
-      setTransactions(data)
-      setLoading(false)
-    }
-    fetchData()
-  }, [])
+const totalExpenses = useMemo(
+  () => transactions.reduce((sum, t) => sum + t.amount, 0),
+  [transactions]
+);
 
-  const totalExpenses = transactions.reduce((sum, t) => sum + t.amount, 0)
-  const categoriesUsed = new Set(transactions.map(t => t.category)).size
-  const mostRecent = transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+const categoriesUsed = useMemo(
+  () => new Set(transactions.map(t => t.category)).size,
+  [transactions]
+);
+
+const mostRecent = useMemo(
+  () =>
+    [...transactions].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    )[0],
+  [transactions]
+);
 
   return (
     <div className="mt-2">
     {
-      loading?
+      tLoading?
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-6 animate-pulse">
       {[1, 2, 3].map((_, i) => (
         <div key={i} className="p-4 bg-card shadow rounded space-y-2">

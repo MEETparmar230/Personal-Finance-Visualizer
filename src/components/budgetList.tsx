@@ -7,6 +7,7 @@ import {
 import { useState } from 'react'
 import { useAlert } from "@/context/AlertContext"
 
+
 type Budget = {
   _id: string
   category: string
@@ -20,6 +21,8 @@ type Props = {
   onSuccess: () => Promise<void>
   loading:true|false
 }
+
+
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -39,7 +42,6 @@ export default function BudgetList({ budgets, onSuccess, loading }: Props) {
   const [deleteLoadingId, setDeleteLoadingId] = useState<string|null>(null)
   const [saveLoading, setSaveLoading] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
-  
 
   const handleEditClick = (b: Budget) => {
     setEditLoading(true)
@@ -53,44 +55,91 @@ export default function BudgetList({ budgets, onSuccess, loading }: Props) {
     setEditLoading(false)
   }
 
-  const handleUpdate = async (id: string) => {
-      setSaveLoading(true)
-    const res = await fetch(`/api/budgets/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...editForm,
+const handleUpdate = async (id: string) => {
+  setSaveLoading(true);
+
+  const res = await fetch("/api/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: `
+        mutation UpdateBudget(
+          $_id: ID!
+          $category: String!
+          $amount: Float!
+          $month: String!
+          $year: String!
+        ) {
+          updateBudget(
+            _id: $_id
+            category: $category
+            amount: $amount
+            month: $month
+            year: $year
+          ) {
+            success
+            message
+          }
+        }
+      `,
+      variables: {
+        _id: id,
+        category: editForm.category,
         amount: Number(editForm.amount),
-      })
-    })
+        month: editForm.month,
+        year: editForm.year,
+      },
+    }),
+  });
 
-    if (res.ok) {
-      setEditingId(null)
-      await onSuccess()
-      setAlert("Budget Updated!")
-      setAlertType("success")
-    } else {
-      setAlert("Update failed")
-      setAlertType("error")
-    }
-    setSaveLoading(false)
+  const json = await res.json();
+
+  if (json.data?.updateBudget?.success) {
+    setEditingId(null);
+    await onSuccess();
+    setAlert("Budget Updated!");
+    setAlertType("success");
+  } else {
+    setAlert(json.errors?.[0]?.message || "Update failed");
+    setAlertType("error");
   }
 
-  const handleDelete = async (id: string) => {
-    setDeleteLoadingId(id)
-    const res = await fetch(`/api/budgets/${id}`, {
-      method: 'DELETE'
-    })
-    if (res.ok) {
-      await onSuccess()
-      setAlert("Budget Deleted!")
-      setAlertType("success")
-    } else {
-      setAlert("Delete failed")
-      setAlertType("error")
-    }
-    setDeleteLoadingId(null)
+  setSaveLoading(false);
+};
+
+
+const handleDelete = async (id: string) => {
+  setDeleteLoadingId(id);
+
+  const res = await fetch("/api/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: `
+        mutation DeleteBudget($_id: ID!) {
+          deleteBudget(_id: $_id) {
+            success
+            message
+          }
+        }
+      `,
+      variables: { _id: id },
+    }),
+  });
+
+  const json = await res.json();
+
+  if (json.data?.deleteBudget?.success) {
+    await onSuccess();
+    setAlert("Budget Deleted!");
+    setAlertType("success");
+  } else {
+    setAlert(json.errors?.[0]?.message || "Delete failed");
+    setAlertType("error");
   }
+
+  setDeleteLoadingId(null);
+};
 
 
   return (

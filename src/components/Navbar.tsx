@@ -15,8 +15,7 @@ function Navbar() {
   const pathname = usePathname()
 
   const links = [
-    { href: '/', label: 'Home' },
-    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/', label: 'Dashboard' },
     { href: '/budgets', label: 'Budgets' },
     { href: '/transactions', label: 'Transactions' },
   ]

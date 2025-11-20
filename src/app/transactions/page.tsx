@@ -1,7 +1,10 @@
 'use client'
 import TransactionForm from '@/components/TransactionForm'
 import TransactionList from '@/components/TransactionList'
-import  { useEffect, useState } from 'react'
+import { useAlert } from '@/context/AlertContext'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
+import { useEffect, useState } from 'react'
 
 
 
@@ -10,36 +13,51 @@ type Transaction = {
   amount: number
   date: string
   description: string
-  category:string
+  category: string
+}
+
+const GET_TRANSACTIONS = gql`
+  query GetTransactions {
+    transactions{
+      _id
+      amount
+      date
+      description
+      category
+    }
+  }
+`
+interface GetTransactionsData {
+  transactions:Transaction[]
 }
 
 export default function Home() {
-  const [loading,setLoading] = useState(false)
-  const [transactions,setTransactions] = useState<Transaction[]>([])
-  const fetchData = async () => {
-    setLoading(true)
-      const res = await fetch('/api/transactions')
-      const data = await res.json()
-      setTransactions(data);
-      setLoading(false)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const {loading,error,refetch,data} = useQuery<GetTransactionsData>(GET_TRANSACTIONS)
+  const {setAlert,setAlertType} = useAlert();
+
+  const fetchData = async ()=>{
+    await refetch()
   }
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    if(data?.transactions){
+    setTransactions(data?.transactions)
+    }
+  }, [data])
 
-  // const chartData = transactions.reduce((acc: Record<string, number>, t) => {
-  //   const month = new Date(t.date).toLocaleString('default', { month: 'short', year: 'numeric' })
-  //   acc[month] = (acc[month] || 0) + t.amount
-  //   return acc
-  // }, {})
+  useEffect(()=>{
+    if(error){
+    setAlert("Failed to load Transactions")
+    setAlertType("error")
+    }
+  },[error])
 
-  //   const formattedChartData = Object.entries(chartData).map(([month, amount]) => ({ month, amount }))
 
   return (
     <main className="p-4 ">
       <TransactionForm onSuccess={fetchData} />
-      <TransactionList transactions={transactions} onSuccess={fetchData} loading={loading}/>
+      <TransactionList transactions={transactions} onSuccess={fetchData} loading={loading} />
     </main>
   )
 }

@@ -1,6 +1,5 @@
 'use client'
 
-
 import { useState } from 'react'
 import {
   Select,
@@ -14,16 +13,38 @@ import {
 import { useAlert } from '@/context/AlertContext'
 import { DatePicker } from './DatePicker'
 
-
 type Props = {
   onSuccess: () => Promise<void>
 }
+
 type ErrorType = {
   amount?: string
   date?: string
   description?: string
   category?: string
 }
+
+const mutation = `
+  mutation addTransaction(
+    $amount: Float!,
+    $date: Date!,
+    $description: String!,
+    $category: String!
+  ) {
+    addTransaction(
+      amount: $amount,
+      date: $date,
+      description: $description,
+      category: $category
+    ) {
+      _id
+      amount
+      date
+      description
+      category
+    }
+  }
+`
 
 export default function TransactionForm({ onSuccess }: Props) {
   const [amount, setAmount] = useState('')
@@ -32,68 +53,90 @@ export default function TransactionForm({ onSuccess }: Props) {
   const [category, setCategory] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<ErrorType>({})
+
   const { setAlert, setAlertType } = useAlert()
 
-  const checkEmpty = (): boolean => {
+  const checkEmpty = () => {
     const newErrors: ErrorType = {}
-    if (amount.trim() === '') { newErrors.amount = "Amount is Required" }
-    if (date.trim() === '') { newErrors.date = "Date is Required" }
-    if (description.trim() === '') { newErrors.description = "Description is Required" }
-    if (category.trim() === '') { newErrors.category = "required" }
+    if (!amount) newErrors.amount = "Amount is Required"
+    if (!date) newErrors.date = "Date is Required"
+    if (!description) newErrors.description = "Description is Required"
+    if (!category) newErrors.category = "Category is Required"
     setError(newErrors)
-    return (Object.keys(newErrors).length === 0)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError({})
-    if (!checkEmpty()) {
-      return
-    }
-    setLoading(true)
-    const res = await fetch('/api/transactions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: Number(amount), date, description, category, }),
-    })
 
-    if (res.ok) {
-      setAmount('')
-      setDate('')
-      setDescription('')
-      setCategory('')
-      setAlert('Transaction added!')
-      setAlertType("success")
-      await onSuccess()
-    } else {
-      setAlert('Something went wrong')
-      setAlertType('error')
+    if (!checkEmpty()) return
+
+    setLoading(true)
+
+    try {
+      const res = await fetch("/api/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+  query: mutation,
+  variables: {
+    amount: Number(amount),
+    date,
+    description,
+    category,
+  }
+})
+
+
+      })
+
+      const json = await res.json()
+
+      if (json.errors) {
+        setAlert("Failed to add transaction")
+        setAlertType("error")
+      } else {
+        setAlert("Transaction Added Successfully")
+        setAlertType("success")
+
+        // reset form
+        setAmount('')
+        setDate('')
+        setDescription('')
+        setCategory('')
+
+        await onSuccess()
+      }
+
+    } catch (err) {
+      setAlert("Something went wrong")
+      setAlertType("error")
     }
 
     setLoading(false)
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-md max-w-md mx-auto mt-6 bg-card border border-border">
+    <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-md max-w-md mx-auto mt-6 bg-card">
+      
       <div>
         <input
           type="number"
           placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border p-2 w-full rounded "
+          className="border p-2 w-full rounded"
         />
-        {error && <p className='text-red-400 text-sm font-light '>{error.amount}</p>}
+        {error.amount && <p className="text-red-400 text-sm">{error.amount}</p>}
       </div>
+
       <div>
-        <div className="h-10 border hover:border-2 border-gray-200 hover:border-gray-300  rounded-md py-1">
-        <DatePicker
-          value={date}
-          onChange={(newValue) => setDate(newValue)}
-        />
+        <div className="h-10 border rounded-md py-1">
+          <DatePicker value={date} onChange={setDate} />
         </div>
-        {error && <p className='text-red-400 text-sm font-light'>{error.date}</p>}
+        {error.date && <p className="text-red-400 text-sm">{error.date}</p>}
       </div>
+
       <div>
         <input
           type="text"
@@ -102,11 +145,12 @@ export default function TransactionForm({ onSuccess }: Props) {
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 w-full rounded"
         />
-        {error && <p className='text-red-400 text-sm font-light'>{error.description}</p>}
+        {error.description && <p className="text-red-400 text-sm">{error.description}</p>}
       </div>
+
       <div>
-        <Select value={category} onValueChange={(value) => setCategory(value)}>
-          <SelectTrigger className="w-[180px] ">
+        <Select value={category} onValueChange={setCategory}>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
           <SelectContent>
@@ -122,10 +166,10 @@ export default function TransactionForm({ onSuccess }: Props) {
             </SelectGroup>
           </SelectContent>
         </Select>
-
-        {error && <p className='text-red-400 text-sm font-light'>{error.category}</p>}
+        {error.category && <p className="text-red-400 text-sm">{error.category}</p>}
       </div>
-      <button type="submit" disabled={loading} className="bg-primary text-primary-foreground px-4 py-2 rounded">
+
+      <button type="submit" disabled={loading} className="bg-primary text-white px-4 py-2 rounded">
         {loading ? 'Adding...' : 'Add Transaction'}
       </button>
     </form>

@@ -25,6 +25,45 @@ type Props = {
   loading: true | false;
 };
 
+const UPDATE_TRANSACTION = `
+  mutation UpdateTransaction(
+    $_id: ID!,
+    $amount: Float!,
+    $date: Date!,
+    $description: String!,
+    $category: String!
+  ) {
+    updateTransaction(
+      _id: $_id,
+      amount: $amount,
+      date: $date,
+      description: $description,
+      category: $category
+    ) {
+      success
+      message
+      data {
+        _id
+        amount
+        date
+        description
+        category
+      }
+    }
+  }
+`;
+
+const DELETE_TRANSACTION = `
+  mutation DeleteTransaction($_id: ID!) {
+    deleteTransaction(_id: $_id) {
+      success
+      message
+    }
+  }
+`;
+
+
+
 export default function TransactionList({ transactions, onSuccess, loading }: Props) {
   const pathname = usePathname();
   const hideControls = pathname === '/dashboard'
@@ -65,60 +104,100 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
 
   const handleDelete = async (id: string) => {
     setDeleteLoadingId(id)
-    const res = await fetch(`/api/transactions/${id}`, {
-      method: 'DELETE'
-    })
+    const res = await fetch("/api/graphql", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    query: DELETE_TRANSACTION,
+    variables: { _id: id },
+  }),
+});
 
-    if (res.ok) {
-      onSuccess?.();
-      setAlert('Transaction Deleted!')
-      setAlertType('success')
-    }
-    else {
-      setAlert('Failed to delete')
-      setAlertType("error")
-    }
+const json = await res.json();
+
+if (json.data.deleteTransaction.success) {
+  onSuccess?.();
+  setAlert("Transaction Deleted!");
+  setAlertType("success");
+} else {
+  setAlert(json.data.deleteTransaction.message);
+  setAlertType("error");
+}
+
     setDeleteLoadingId(null)
   }
 
-  const handleEditClick = (t: Transaction) => {
-    setEditLoading(true)
-    setEditingId(t._id)
-    setEditForm({
-      amount: t.amount.toString(),
-      date: t.date.slice(0, 10),
-      description: t.description,
-      category: t.category,
-    })
-    setEditLoading(false)
+ const handleEditClick = (t: Transaction) => {
+  setEditLoading(true)
+  setEditingId(t._id)
+  setEditForm({
+    amount: t.amount.toString(),
+    date: new Date(t.date).toISOString().split('T')[0],
+    description: t.description,
+    category: t.category,
+  })
+  setEditLoading(false)
+}
+
+const handleUpdate = async (id: string) => {
+  setSaveLoading(true)
+  setError({})
+  
+  if (!checkEmpty()) { 
+    setSaveLoading(false);
+    return;
   }
 
-  const handleUpdate = async (id: string) => {
-    setSaveLoading(true)
-    setError({})
-    if (!checkEmpty()) return;
-    const res = await fetch(`/api/transactions/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: Number(editForm.amount),
-        date: editForm.date,
-        description: editForm.description,
-        category: editForm.category
-      }),
-    })
-
-    if (res.ok) {
-      setEditingId(null)
-      await onSuccess?.()
-      setAlert("Transaction Updated!")
-      setAlertType("success")
-    } else {
-      setAlert('Update failed')
-      setAlertType("error")
+  try {
+    const dateObj = new Date(editForm.date);
+    
+    // Validate date
+    if (isNaN(dateObj.getTime())) {
+      setAlert("Invalid date format");
+      setAlertType("error");
+      setSaveLoading(false);
+      return;
     }
-    setSaveLoading(false)
+
+    const res = await fetch("/api/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: UPDATE_TRANSACTION,
+        variables: {
+          _id: id,
+          amount: Number(editForm.amount),
+          date: dateObj.toISOString(),
+          description: editForm.description,
+          category: editForm.category,
+        },
+      }),
+    });
+
+    const json = await res.json();
+
+    // Check for GraphQL errors
+    if (json.errors) {
+      console.error('GraphQL errors:', json.errors);
+      setAlert(json.errors[0].message);
+      setAlertType("error");
+    } else if (json.data?.updateTransaction?.success) {
+      setEditingId(null);
+      await onSuccess?.();
+      setAlert("Transaction Updated!");
+      setAlertType("success");
+    } else {
+      setAlert(json.data?.updateTransaction?.message || "Update failed");
+      setAlertType("error");
+    }
+  } catch (error) {
+    console.error('Update error:', error);
+    setAlert("Network error occurred");
+    setAlertType("error");
   }
+  
+  setSaveLoading(false);
+}
 
 
   return (
@@ -174,17 +253,20 @@ export default function TransactionList({ transactions, onSuccess, loading }: Pr
                             onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
                             className="rounded-md border px-2 max-w-26 w-auto "
                           />
-                          {error && <p className='text-red-400 text-sm font-light'>{error.amount}</p>}
+                          {error.amount && <p className='text-red-400 text-sm font-light'>{error.amount}</p>}
                         </div>
                         <div >
-                          <div className='w-35 border  rounded-md'>
-                          <DatePicker
-                          
-                            value={editForm.date}
-                            onChange={(newValue) => setEditForm({ ...editForm, date: newValue })}
-                          />
-                          </div>
-                          {error && <p className='text-red-400 text-sm font-light'>{error.date}</p>}
+                         <div className='w-35 border rounded-md'>
+  <DatePicker
+    value={editForm.date}
+    onChange={(newValue) => {
+     
+      const formattedDate = new Date(newValue).toISOString().split('T')[0];
+      setEditForm({ ...editForm, date: formattedDate });
+    }}
+  />
+</div>
+                          {error.date && <p className='text-red-400 text-sm font-light'>{error.date}</p>}
                         </div>
                       </div>
                       <div className=' grid grid-cols-1 gap-2'>

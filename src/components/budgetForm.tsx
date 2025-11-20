@@ -1,87 +1,96 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   Select, SelectTrigger, SelectValue, SelectContent,
   SelectGroup, SelectItem, SelectLabel
-} from "@/components/ui/select"
+} from '@/components/ui/select';
 import { useAlert } from '@/context/AlertContext';
+import { gql } from "@apollo/client";
+import { useMutation } from '@apollo/client/react';
 
+export const ADD_BUDGET = gql`
+  mutation AddBudget($category: String!, $amount: Float!, $month: String!, $year: String!) {
+    addBudget(category: $category, amount: $amount, month: $month, year: $year) {
+      _id
+      category
+      amount
+      month
+      year
+    }
+  }
+`;
 
 
 type Props = {
-  onSuccess: () => Promise<void>
-}
+  onSuccess: () => Promise<void>;
+};
 
 type ErrorType = {
-  category?: string
-  amount?: string
-  month?: string
-  year?: string
-}
+  category?: string;
+  amount?: string;
+  month?: string;
+  year?: string;
+};
 
 export default function BudgetForm({ onSuccess }: Props) {
-  const [category, setCategory] = useState('')
-  const [amount, setAmount] = useState('')
-  const [month, setMonth] = useState('')
-  const [year, setYear] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<ErrorType>({})
-  const { setAlert, setAlertType } = useAlert()
+  const [category, setCategory] = useState('');
+  const [amount, setAmount] = useState('');
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
+  const [error, setError] = useState<ErrorType>({});
+  const { setAlert, setAlertType } = useAlert();
 
-
+  const [addBudget, { loading }] = useMutation(ADD_BUDGET);
 
   const checkEmpty = (): boolean => {
-    const newErrors: ErrorType = {}
-    if (!category.trim()) newErrors.category = "Category is required"
-    if (!amount.trim()) newErrors.amount = "Amount is required"
-    if (!month.trim()) newErrors.month = "Month is required"
-    if (!year.trim()) newErrors.year = "Year is required"
-
-    setError(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    const newErrors: ErrorType = {};
+    if (!category.trim()) newErrors.category = 'Category is required';
+    if (!amount.trim()) newErrors.amount = 'Amount is required';
+    if (!month.trim()) newErrors.month = 'Month is required';
+    if (!year.trim()) newErrors.year = 'Year is required';
+    setError(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError({})
-    if (!checkEmpty()) return
+    e.preventDefault();
+    setError({});
+    if (!checkEmpty()) return;
 
-    setLoading(true)
+    try {
+      await addBudget({
+        variables: {
+          category,
+          amount: parseFloat(amount),
+          month,
+          year,
+        },
+      });
 
-    const res = await fetch('/api/budgets', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ category, amount: Number(amount), month, year })
-    })
-    
-    if (res.ok) {
-      setCategory('')
-      setAmount('')
-      setMonth('')
-      setYear('')
-      await onSuccess()
-      setAlert('Budget added!')
-      setAlertType('success')
-    }
-   else if (res.status === 409) {
-      setAlert('Budget already exists');
+      setCategory('');
+      setAmount('');
+      setMonth('');
+      setYear('');
+      await onSuccess();
+      setAlert('Budget added!');
+      setAlertType('success');
+    } catch (err: any) {
+      if (err.message.includes('already exists')) {
+        setAlert('Budget already exists');
+      } else {
+        setAlert('Failed to add budget');
+      }
       setAlertType('error');
-      
     }
-
-    else {
-      setAlert('Failed to add budget')
-      setAlertType('error')
-    }
-
-    setLoading(false)
-  }
-
+  };
 
   return (
-    <div className=''>
-      <form onSubmit={handleSubmit} className="space-y-4 p-4 border border-border rounded-md max-w-md mx-auto mt-6 bg-card">
+    <div>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 p-4 border border-border rounded-md max-w-md mx-auto mt-6 bg-card"
+      >
         <div>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger className="w-full">
@@ -90,9 +99,13 @@ export default function BudgetForm({ onSuccess }: Props) {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Category</SelectLabel>
-                {['Food', 'Transport', 'Bills', 'Shopping', 'Entertainment', 'Health', 'Other'].map(cat => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                ))}
+                {['Food', 'Transport', 'Bills', 'Shopping', 'Entertainment', 'Health', 'Other'].map(
+                  (cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ),
+                )}
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -149,7 +162,5 @@ export default function BudgetForm({ onSuccess }: Props) {
         </button>
       </form>
     </div>
-  )
+  );
 }
-
-

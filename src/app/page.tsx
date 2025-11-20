@@ -1,51 +1,94 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { fetchTransactions, fetchBudgets } from '@/lib/api'
+import { gql } from '@apollo/client'
 
 import SummaryCards from '@/components/SummaryCards'
 import ChartBar from '@/components/ChartBar'
 import PieChart from '@/components/PieChart'
 import ProgressBar from '@/components/ProgressBar'
+import { useQuery } from '@apollo/client/react'
+import { useAlert } from '@/context/AlertContext'
 
 type Transaction = {
-  _id: string;
-  amount: number;
-  date: string;
-  description: string;
-  category: string;
-};
+  _id: string
+  amount: number
+  date: string
+  description: string
+  category: string
+}
+
 
 type Budget = {
-  _id: string;
-  category: string;
-  amount: number;
-  month: string;
-  year: string;
-};
+  _id: string
+  category: string
+  amount: number
+  month: string
+  year: string
+}
+
+interface GetTransactionsData {
+  transactions: Transaction[];
+}
+
+interface GetBudgetsData {
+  budgets: Budget[];
+}
+
+
+const GET_TRANSACTIONS = gql`
+  query GetTransactions {
+    transactions {
+      _id
+      amount
+      date
+      description
+      category
+    }
+  }
+`;
+
+const GET_BUDGETS = gql`
+  query GetBudgets {
+    budgets {
+      _id
+      category
+      amount
+      month
+      year
+    }
+  }
+`;
 
 export default function Home() {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [budgets, setBudgets] = useState<Budget[]>([])
-  const [tLoading,setTLoading] = useState(false)
-  const [bLoading,setBLoading] = useState(false)
+  const {setAlert,setAlertType} = useAlert()
+  const {
+    data: txData,
+    loading: tLoading,
+    error: tError,
+  } = useQuery<GetTransactionsData>(GET_TRANSACTIONS);
 
-  useEffect(() => {
-    const load = async () => {
-      setTLoading(true)
-      setBLoading(true)
-      const [txns, buds] = await Promise.all([fetchTransactions(), fetchBudgets()])
-      setTransactions(txns)
-      setBudgets(buds)
-      setTLoading(false)
-      setBLoading(false)
-    }
-    load()
-  }, [])
+  if (tError) {
+    setAlert("Failed to load Transactions");
+    setAlertType("error");
+  }
+
+  const {
+    data: budgetData,
+    loading: bLoading,
+    error: bError,
+  } = useQuery<GetBudgetsData>(GET_BUDGETS);
+
+  if (bError) {
+    setAlert("Failed to load Budgets");
+    setAlertType("error");
+  }
+
+  const transactions:Transaction[] = txData?.transactions || [];
+  const budgets:Budget[] = budgetData?.budgets|| [];
 
   return (
     <main className="p-4 bg-background">
-      <SummaryCards />
+      <SummaryCards transactions={transactions} tLoading={tLoading}/>
       <ChartBar transactions={transactions} tLoading={tLoading}/>
       <PieChart />
       <ProgressBar budgets={budgets} transactions={transactions} loading={(bLoading&&tLoading)}/>

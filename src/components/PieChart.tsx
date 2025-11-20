@@ -1,5 +1,8 @@
 'use client'
 
+import { useAlert } from '@/context/AlertContext'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { useEffect, useState } from 'react'
 import { PieChart as RePieChart, Pie, Tooltip } from 'recharts'
 
@@ -11,6 +14,21 @@ type Transaction = {
   category: string
 }
 
+const GET_TRANSACTIONS = gql`
+  query GetTransactions {
+    transactions{
+      _id
+      amount
+      date
+      description
+      category
+    }
+  }
+`
+interface GetTransactionsData {
+  transactions:Transaction[]
+}
+
 const monthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
@@ -20,22 +38,24 @@ export default function PieChart() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1)
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
-  const [loading ,setLoading] = useState(false)
+  const {loading,error,data} = useQuery<GetTransactionsData>(GET_TRANSACTIONS)
+  const {setAlert,setAlertType} = useAlert();
   
-
   useEffect(() => {
-    setLoading(true)
-    const fetchData = async () => {
-      const res = await fetch('/api/transactions')
-      const data = await res.json()
-      setTransactions(data)
-      setLoading(false)
+    if(data?.transactions){
+    setTransactions(data?.transactions)
     }
-    fetchData()
-  }, [])
+  }, [data])
+
+  useEffect(()=>{
+    if(error){
+    setAlert("Failed to load Transactions")
+    setAlertType("error")
+    }
+  },[error])
 
   // Filter transactions based on selected month & year
-  const filteredTransactions = transactions.filter((t) => {
+  const filteredTransactions = [...transactions].filter((t) => {
     const d = new Date(t.date)
     return d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear
   })

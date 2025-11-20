@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import { AlertProvider } from "@/context/AlertContext";
 import AlertDisplay from "@/components/AlertDisplay";
 import { ThemeProvider } from "@/components/theme-provider";
+import ApolloClientProvider from '@/components/ApolloClientProvider'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ApolloClientProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -60,6 +62,7 @@ export default function RootLayout({
             </div>
           </AlertProvider>
         </ThemeProvider>
+        </ApolloClientProvider>
       </body>
     </html>
   );
