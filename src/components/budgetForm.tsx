@@ -8,7 +8,7 @@ import {
 import { useAlert } from '@/context/AlertContext';
 import { gql } from "@apollo/client";
 import { useMutation } from '@apollo/client/react';
-
+import { GraphQLError } from "graphql";
 export const ADD_BUDGET = gql`
   mutation AddBudget($category: String!, $amount: Float!, $month: String!, $year: String!) {
     addBudget(category: $category, amount: $amount, month: $month, year: $year) {
@@ -75,14 +75,24 @@ export default function BudgetForm({ onSuccess }: Props) {
       await onSuccess();
       setAlert('Budget added!');
       setAlertType('success');
-    } catch (err: any) {
-      if (err.message.includes('already exists')) {
-        setAlert('Budget already exists');
-      } else {
-        setAlert('Failed to add budget');
-      }
-      setAlertType('error');
+    } 
+    
+catch (err) {
+  if (err instanceof GraphQLError) {
+    if (err.message.includes("already exists")) {
+      setAlert("Budget already exists");
+    } else {
+      setAlert(err.message);
     }
+  } else if (err instanceof Error) {
+    setAlert(err.message);
+  } else {
+    setAlert("Failed to add budget");
+  }
+
+  setAlertType("error");
+}
+
   };
 
   return (

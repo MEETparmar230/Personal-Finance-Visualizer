@@ -73,6 +73,9 @@ export default function TransactionForm({ onSuccess }: Props) {
 
     setLoading(true)
 
+    const [day, month, year] = date.split("/").map(Number)
+    const isoDate = new Date(year,month-1,day).toISOString()
+
     try {
       const res = await fetch("/api/graphql", {
         method: "POST",
@@ -81,7 +84,7 @@ export default function TransactionForm({ onSuccess }: Props) {
   query: mutation,
   variables: {
     amount: Number(amount),
-    date,
+    date:isoDate,
     description,
     category,
   }
@@ -111,6 +114,7 @@ export default function TransactionForm({ onSuccess }: Props) {
     } catch (err) {
       setAlert("Something went wrong")
       setAlertType("error")
+      console.log(err)
     }
 
     setLoading(false)
