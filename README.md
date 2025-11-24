@@ -1,6 +1,6 @@
 # 💰 Personal Finance Visualizer
 
-A full-stack web application to help users track transactions, set monthly budgets, and visualize their spending trends. Built using **Next.js**, **MongoDB**, **Recharts**, **oAuth**, **JWT** and **shadcn/ui**.
+A full-stack web application to help users track transactions, set monthly budgets, and visualize their spending trends. Built using **Next.js**, **MongoDB**, **Recharts**, **OAuth**, **JWT** and **shadcn/ui**.
 
 [![Tech](https://img.shields.io/badge/Next.js-14-blue?logo=nextdotjs)](https://nextjs.org)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-green?logo=mongodb)](https://www.mongodb.com/)
