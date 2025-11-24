@@ -33,7 +33,7 @@ A full-stack web application to help users track transactions, set monthly budge
 - **Charts**: Recharts  
 - **Validations**: zod  
 - **UI/UX**: Tailwind + shadcn/ui with **Dark-mode support**  
-- **Auth**: OAuth (Google & GitHub) + JWT sessions
+- **Auth**: OAuth (Google) + JWT sessions
 
 ---
 
