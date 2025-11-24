@@ -20,7 +20,7 @@ const server = new ApolloServer({
 });
 
 const handler = startServerAndCreateNextHandler(server, {
-  context: async (_req: NextRequest): Promise<GraphQLContext> => {
+  context: async (): Promise<GraphQLContext> => {
     const session = await getServerSession(authOptions) as Session | null;
     return {
       user: session?.user ?? null,
