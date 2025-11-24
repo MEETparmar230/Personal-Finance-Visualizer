@@ -56,9 +56,11 @@ A full-stack web application to help users track transactions, set monthly budge
    cd personal-finance-visualizer
 
 2. **Install dependencies**
+   ```bash
    pnpm install
-   # or
+    or
    npm install
+   ```
 
 3. **Set up environment variables**
    ```bash
@@ -71,7 +73,9 @@ A full-stack web application to help users track transactions, set monthly budge
    ```
 
 4. **Run the development server**
+   ```bash
    pnpm run dev
+   ```
 
 5. Open http://localhost:3000 in your browser.
 
