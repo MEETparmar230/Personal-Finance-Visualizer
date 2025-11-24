@@ -10,6 +10,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 import { ModeToggle } from './ModeToggle'
+import AuthButtons from './AuthButtons'
 
 function Navbar() {
   const pathname = usePathname()
@@ -21,7 +22,7 @@ function Navbar() {
   ]
 
   return (
-    <div className="p-4 shadow bg-card text-card-foreground fixed top-0 w-full  z-50">
+    <div className="md:px-4 py-4 shadow bg-card text-card-foreground fixed top-0 w-full  z-50">
       <NavigationMenu className="mx-auto">
         <NavigationMenuList>
           {links.map(link => (
@@ -29,7 +30,7 @@ function Navbar() {
               <NavigationMenuLink asChild>
                 <Link
                   href={link.href}
-                  className={`px-3 py-1 rounded-md transition ${
+                  className={`md:px-3 py-1 rounded-md transition ${
                     pathname === link.href
                       ? 'text-blue-600 font-semibold '
                       : 'hover:popover'
@@ -38,10 +39,15 @@ function Navbar() {
                   {link.label}
                 </Link>
               </NavigationMenuLink>
+              
             </NavigationMenuItem>
           ))}
           <NavigationMenuItem >
-              <ModeToggle/>
+               <div className="flex items-center md:gap-4">
+          <AuthButtons />
+          <ModeToggle />
+        </div>
+              
             </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>

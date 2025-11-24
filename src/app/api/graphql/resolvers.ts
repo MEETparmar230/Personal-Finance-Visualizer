@@ -4,6 +4,8 @@ import Budget from "@/lib/models/budget";
 import Transaction from "@/lib/models/transaction";
 import type { Document } from "mongoose";
 import GraphQLJSON from "graphql-type-json";
+import type { GraphQLContext } from "@/app/api/graphql/route"; 
+
 
 // Define interfaces
 interface BudgetDoc extends Document {
@@ -88,71 +90,93 @@ export const resolvers = {
   Date: DateScalar, 
   JSON: GraphQLJSON, 
   Query: {
-    budgets: async (): Promise<BudgetDoc[]> => {
+    budgets: async (_parent: unknown,_args: unknown,context: GraphQLContext): Promise<BudgetDoc[]> => {
+            if (!context.user) {
+        throw new Error("Unauthorized");
+      }
       await connectDB();
-      return await Budget.find();
+      const budgets = await Budget.find({userEmail:context.user.email}).sort({ month: 1, year: -1 });
+
+       return (budgets?  budgets :  [])
     },
-    transactions: async (): Promise<TransactionDoc[]> => {
+    transactions: async (_parent: unknown,_args: unknown,context: GraphQLContext): Promise<TransactionDoc[]> => {
+            if (!context.user) {
+        throw new Error("Unauthorized");
+      }
       await connectDB();
-      return await Transaction.find().sort({ date: -1 });
+       const transactions = await Transaction.find({userEmail:context.user.email}).sort({ date: -1 });
+       return transactions || [];
     },
   },
 
   Mutation: {
-    addBudget: async (_parent: unknown, args: AddBudgetArgs): Promise<BudgetDoc> => {
+    addBudget: async (_parent: unknown, args: AddBudgetArgs,context: GraphQLContext): Promise<BudgetDoc> => {
+            if (!context.user) {
+        throw new Error("Unauthorized");
+      }
       await connectDB();
 
       const existing = await Budget.findOne({
         category: args.category,
         month: args.month,
         year: args.year,
+        userEmail: context.user.email,
       });
 
       if (existing) {
         throw new Error("Budget for this category and month already exists");
       }
 
-      const newBudget = new Budget(args);
+      const newBudget = new Budget({
+        ...args,
+        userEmail: context.user.email,
+      });
+      
       return await newBudget.save();
     },
 
-    updateBudget: async (_parent: unknown,args:UpdateBudgetArgs):Promise<{ success: boolean; message: string; data: BudgetDoc | null }>=>{
-      await connectDB();
-      const updatedBudget=await Budget.findByIdAndUpdate(args._id,{
-        category:args.category,
-        amount:args.amount,
-        month:args.month,
-        year:args.year,
-        metadata: args.metadata
-      },{new:true});
-
-      if(!updatedBudget){
-        return { success: false, message: "Budget not found", data: null };
+    updateBudget: async (_parent: unknown,args:UpdateBudgetArgs,context: GraphQLContext):Promise<{ success: boolean; message: string; data: BudgetDoc | null }>=>{
+            if (!context.user) {
+        throw new Error("Unauthorized");
       }
+      await connectDB();
+     const updatedBudget = await Budget.findOneAndUpdate(
+      { _id: args._id, userEmail: context.user.email },
+      { ...args },
+      { new: true }
+    );
+
+      if (!updatedBudget)
+      return { success: false, message: "Not found or unauthorized", data: null };
 
       return { success: true, message: "Budget updated", data: updatedBudget };
     },
 
-    deleteBudget: async (_parent: unknown,args:DeleteArgs):Promise<{ success: boolean; message: string; data: BudgetDoc | null }>=>{
-      await connectDB();
-      const deletedBudget=await Budget.findByIdAndDelete(args._id);
-
-      if(!deletedBudget){
-        return {success:false,message:"Budget not found",data:null};
+    deleteBudget: async (_parent: unknown,args:DeleteArgs,context: GraphQLContext):Promise<{ success: boolean; message: string; data: BudgetDoc | null }>=>{
+            if (!context.user) {
+        throw new Error("Unauthorized");
       }
+      await connectDB();
+      const deletedBudget = await Budget.findOneAndDelete({
+      _id: args._id,
+      userEmail: context.user.email,
+    });
+
+     if (!deletedBudget)
+      return { success: false, message: "Not found or unauthorized", data: null };
      
       return { success: true, message: "Budget deleted", data: deletedBudget };
     },
 
- addTransaction: async (_parent: unknown, args: AddTransactionArgs): Promise<TransactionDoc> => {
+ addTransaction: async (_parent: unknown, args: AddTransactionArgs, context: GraphQLContext): Promise<TransactionDoc> => {
+        if (!context.user) {
+        throw new Error("Unauthorized");
+      }
   await connectDB();
 
   const newTransaction = await Transaction.create({
-    amount: args.amount,
-    date: args.date,  
-    description: args.description,
-    category: args.category,
-    metadata: args.metadata || {}
+    ...args,
+    userEmail: context.user.email, 
   });
 
   return newTransaction;
@@ -162,26 +186,24 @@ export const resolvers = {
 
     updateTransaction: async (
       _parent: unknown,
-      args: UpdateTransactionArgs
+      args: UpdateTransactionArgs,
+      context: GraphQLContext
     ): Promise<{ success: boolean; message: string; data: TransactionDoc | null }> => {
+            if (!context.user) {
+        throw new Error("Unauthorized");
+      }
       await connectDB();
 
       try {
-        const updatedTransaction = await Transaction.findByIdAndUpdate(
-          args._id,
-          {
-            amount: args.amount,
-            date: new Date(args.date),
-            description: args.description,
-            category: args.category,
-            metadata: args.metadata,
-          },
-          { new: true }
-        );
+        const updatedTransaction = await Transaction.findOneAndUpdate(
+      { _id: args._id, userEmail: context.user.email },
+      { ...args },
+      { new: true }
+    );
 
-        if (!updatedTransaction) {
-          return { success: false, message: "Transaction not found", data: null };
-        }
+
+         if (!updatedTransaction)
+      return { success: false, message: "Not found or unauthorized", data: null };
 
         return { success: true, message: "Transaction updated", data: updatedTransaction };
       } catch (error) {
@@ -190,13 +212,19 @@ export const resolvers = {
       }
     },
 
-    deleteTransaction: async (_parent: unknown,args:DeleteArgs):Promise<{ success: boolean; message: string; data: TransactionDoc | null }>=>{
-      await connectDB();
-      const deletedTransaction=await Transaction.findByIdAndDelete(args._id);
-
-      if(!deletedTransaction){
-        return { success: false, message: "Transaction not found", data: null };
+    deleteTransaction: async (_parent: unknown,args:DeleteArgs, context: GraphQLContext):Promise<{ success: boolean; message: string; data: TransactionDoc | null }>=>{
+            if (!context.user) {
+        throw new Error("Unauthorized");
       }
+      await connectDB();
+const deletedTransaction = await Transaction.findOneAndDelete({
+      _id: args._id,
+      userEmail: context.user.email,
+    });
+     
+    
+     if (!deletedTransaction)
+      return { success: false, message: "Not found or unauthorized", data: null };
 
       return { success: true, message: "Transaction deleted", data: deletedTransaction };
     },

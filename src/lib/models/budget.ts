@@ -7,6 +7,7 @@ const budgetSchema = new mongoose.Schema({
     amount: Number,
     month: String ,
     year:String,
+    userEmail: { type: String, required: true },
 })
 
 const Budget = mongoose.models.Budget || mongoose.model('Budget', budgetSchema);
