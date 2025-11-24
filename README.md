@@ -1,6 +1,6 @@
 # 💰 Personal Finance Visualizer
 
-A full-stack web application to help users track transactions, set monthly budgets, and visualize their spending trends. Built using **Next.js**, **MongoDB**, **Recharts**, and **shadcn/ui**.
+A full-stack web application to help users track transactions, set monthly budgets, and visualize their spending trends. Built using **Next.js**, **MongoDB**, **Recharts**, **oAuth**, **JWT**, and **shadcn/ui**.
 
 [![Tech](https://img.shields.io/badge/Next.js-14-blue?logo=nextdotjs)](https://nextjs.org)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-green?logo=mongodb)](https://www.mongodb.com/)
@@ -14,22 +14,26 @@ A full-stack web application to help users track transactions, set monthly budge
 
 ## 🚀 Features
 
-- 📥 Add, view, and delete transactions
-- 📊 Pie chart for category-wise monthly spending
-- 📈 Bar chart for monthly expenses over time
-- 📌 Set and manage monthly budgets
-- ✅ Track spending vs budget via progress bars
-- 📅 Filter transactions by month and year
+- 📥 Add, view, and delete transactions  
+- 📊 Pie chart for category-wise monthly spending  
+- 📈 Bar chart for monthly expenses over time  
+- 📌 Set and manage monthly budgets  
+- ✅ Track spending vs budget via progress bars  
+- 📅 Filter transactions by month and year  
+- 🌙 Full dark-mode toggle (system-aware)  
+- 🔐 OAuth login (Google & GitHub) – user-specific data  
+- 🕸️ GraphQL API (replaces REST)
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui
-- **Backend**: Next.js API Routes, MongoDB Atlas, Mongoose
-- **Charts**: Recharts
-- **validatoins**:zod
-- **UI/UX**: Clean and responsive design with Tailwind + shadcn/ui
+- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui  
+- **Backend**: Next.js API Routes, **GraphQL** (Apollo Server + resolvers), MongoDB Atlas, Mongoose  
+- **Charts**: Recharts  
+- **Validations**: zod  
+- **UI/UX**: Tailwind + shadcn/ui with **Dark-mode support**  
+- **Auth**: OAuth (Google & GitHub) + JWT sessions
 
 ---
 
@@ -57,23 +61,26 @@ A full-stack web application to help users track transactions, set monthly budge
    npm install
 
 3. **Set up environment variables**
-   Create a .env.local file and add your MongoDB URI:
+   # .env.local
    MONGO_URL=your_mongodb_connection_string
+   NEXTAUTH_SECRET=any_random_string
+   NEXTAUTH_URL=http://localhost:3000
+   GOOGLE_ID=your_google_oauth_client_id
+   GOOGLE_SECRET=your_google_oauth_client_secret
+
 
 4. **Run the development server**
    pnpm run dev
 
 5. Open http://localhost:3000 in your browser.
 
+---
 
 ## 📦 Future Enhancements
 
-- 🔐 Authentication (user-specific data)
+- 📄 Export reports to PDF  
+- 💸 Income tracking & multi-account support  
+- 📈 AI-based expense prediction  
+- 🔔 Real-time spend alerts (web-push)
 
-- 📄 Export reports to PDF
-
-- 🌙 Dark mode
-
-- 💸 Income tracking
-
-- 📈 Expense prediction or trends (AI-based)
+---
