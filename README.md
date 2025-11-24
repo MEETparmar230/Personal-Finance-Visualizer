@@ -21,8 +21,8 @@ A full-stack web application to help users track transactions, set monthly budge
 - ✅ Track spending vs budget via progress bars  
 - 📅 Filter transactions by month and year  
 - 🌙 Full dark-mode toggle (system-aware)  
-- 🔐 OAuth login (Google & GitHub) – user-specific data  
-- 🕸️ GraphQL API (replaces REST)
+- 🔐 OAuth login (Google) 
+- 🕸️ GraphQL API 
 
 ---
 
@@ -61,13 +61,14 @@ A full-stack web application to help users track transactions, set monthly budge
    npm install
 
 3. **Set up environment variables**
+   ```bash
    # .env.local
    MONGO_URL=your_mongodb_connection_string
    NEXTAUTH_SECRET=any_random_string
    NEXTAUTH_URL=http://localhost:3000
    GOOGLE_ID=your_google_oauth_client_id
    GOOGLE_SECRET=your_google_oauth_client_secret
-
+   ```
 
 4. **Run the development server**
    pnpm run dev
