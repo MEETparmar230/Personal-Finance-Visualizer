@@ -4,7 +4,7 @@ import { typeDefs } from "./typeDefs";
 import { resolvers } from "./resolvers";
 import { NextRequest } from "next/server";
 import { getServerSession, Session } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 export interface GraphQLContext {
   user: {
