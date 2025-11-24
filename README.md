@@ -44,7 +44,6 @@ A full-stack web application to help users track transactions, set monthly budge
 | `/`            | Dashboard (summary, charts, budget)  |
 | `/transactions`| Add & manage transactions            |
 | `/budgets`     | Create & update monthly budgets      |
-| `/dashboard`   | Optional advanced charts             |
 
 ---
 
