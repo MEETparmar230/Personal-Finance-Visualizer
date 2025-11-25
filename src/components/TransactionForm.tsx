@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import {
   Select,
@@ -46,6 +45,12 @@ const mutation = `
   }
 `
 
+function convertDDMMYYYYToISO(ddmmyyyy: string): string {
+  const [day, month, year] = ddmmyyyy.split('/').map(Number)
+  const date = new Date(year, month - 1, day)
+  return date.toISOString()
+}
+
 export default function TransactionForm({ onSuccess }: Props) {
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState('')
@@ -53,12 +58,11 @@ export default function TransactionForm({ onSuccess }: Props) {
   const [category, setCategory] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<ErrorType>({})
-
   const { setAlert, setAlertType } = useAlert()
 
   const checkEmpty = () => {
     const newErrors: ErrorType = {}
-    if (!amount) newErrors.amount = "Amount is Required"
+    if (!amount || Number(amount) === 0) newErrors.amount = "Amount is Required"
     if (!date) newErrors.date = "Date is Required"
     if (!description) newErrors.description = "Description is Required"
     if (!category) newErrors.category = "Category is Required"
@@ -68,61 +72,58 @@ export default function TransactionForm({ onSuccess }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!checkEmpty()) return
 
     setLoading(true)
 
-    const [day, month, year] = date.split("/").map(Number)
-    const isoDate = new Date(year,month-1,day).toISOString()
-
     try {
+      const isoDate = convertDDMMYYYYToISO(date)
+
       const res = await fetch("/api/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-  query: mutation,
-  variables: {
-    amount: Number(amount),
-    date:isoDate,
-    description,
-    category,
-  }
-})
-
-
+        body: JSON.stringify({
+          query: mutation,
+          variables: {
+            amount: Number(amount),
+            date: isoDate,
+            description,
+            category,
+          },
+        }),
       })
 
       const json = await res.json()
 
       if (json.errors) {
-        setAlert("Failed to add transaction")
+        setAlert(json.errors[0]?.message || "Failed to add transaction")
         setAlertType("error")
-      } else {
+      } else if (json.data?.addTransaction) {
         setAlert("Transaction Added Successfully")
         setAlertType("success")
-
-        // reset form
         setAmount('')
         setDate('')
         setDescription('')
         setCategory('')
-
         await onSuccess()
+      } else {
+        setAlert("Failed to add transaction")
+        setAlertType("error")
       }
-
     } catch (err) {
       setAlert("Something went wrong")
       setAlertType("error")
-      console.log(err)
+      console.error(err)
     }
 
     setLoading(false)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-md max-w-md mx-auto mt-6 bg-card">
-      
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 p-4 border rounded-md max-w-md mx-auto mt-6 bg-card"
+    >
       <div>
         <input
           type="number"
@@ -149,7 +150,9 @@ export default function TransactionForm({ onSuccess }: Props) {
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 w-full rounded"
         />
-        {error.description && <p className="text-red-400 text-sm">{error.description}</p>}
+        {error.description && (
+          <p className="text-red-400 text-sm">{error.description}</p>
+        )}
       </div>
 
       <div>
@@ -173,7 +176,11 @@ export default function TransactionForm({ onSuccess }: Props) {
         {error.category && <p className="text-red-400 text-sm">{error.category}</p>}
       </div>
 
-      <button type="submit" disabled={loading} className="bg-primary text-white px-4 py-2 rounded">
+      <button
+        type="submit"
+        disabled={loading}
+        className="bg-primary text-white px-4 py-2 rounded disabled:opacity-50"
+      >
         {loading ? 'Adding...' : 'Add Transaction'}
       </button>
     </form>
